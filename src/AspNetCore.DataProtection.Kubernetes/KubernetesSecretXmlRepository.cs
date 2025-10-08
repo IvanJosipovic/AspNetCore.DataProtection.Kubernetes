@@ -11,7 +11,7 @@ namespace AspNetCore.DataProtection.Kubernetes;
 /// <summary>
 /// Support for storing DataProtection keys using Kubernetes Secrets
 /// </summary>
-public sealed class KubernetesSecretXmlRepository : IXmlRepository
+public sealed class KubernetesSecretXmlRepository : IDeletableXmlRepository
 {
     private readonly IKubernetes _k8s;
     private readonly string _namespace;
@@ -56,28 +56,18 @@ public sealed class KubernetesSecretXmlRepository : IXmlRepository
 
         foreach (var s in list.Body.Items)
         {
-            if (s.Data != null && s.Data.TryGetValue(SecretKeyName, out var bytes))
+            try
             {
-                if (bytes != null)
-                {
-                    try
-                    {
-                        var xml = Encoding.UTF8.GetString(bytes);
-
-                        try
-                        {
-                            elements.Add(XElement.Parse(xml));
-                        }
-                        catch (XmlException)
-                        {
-                            Debug.WriteLine($"Failed to parse XML from secret {s.Metadata?.Name} in namespace {_namespace}");
-                        }
-                    }
-                    catch (DecoderFallbackException)
-                    {
-                        Debug.WriteLine($"Failed to decode UTF-8 from secret {s.Metadata?.Name} in namespace {_namespace}");
-                    }
-                }
+                var xml = Encoding.UTF8.GetString(s.Data[SecretKeyName]);
+                elements.Add(XElement.Parse(xml));
+            }
+            catch (DecoderFallbackException)
+            {
+                Debug.WriteLine($"Failed to decode UTF-8 from secret {s.Metadata?.Name} in namespace {_namespace}");
+            }
+            catch (XmlException)
+            {
+                Debug.WriteLine($"Failed to parse XML from secret {s.Metadata?.Name} in namespace {_namespace}");
             }
         }
 
@@ -111,5 +101,63 @@ public sealed class KubernetesSecretXmlRepository : IXmlRepository
         };
 
         _k8s.CoreV1.CreateNamespacedSecretWithHttpMessagesAsync(secret, _namespace).ConfigureAwait(false).GetAwaiter().GetResult();
+    }
+
+    /// <summary>
+    /// Deletes selected DataProtection key elements from Kubernetes Secrets.
+    /// </summary>
+    /// <param name="chooseElements">A callback that receives the list of deletable elements and selects which to delete.</param>
+    /// <returns>True if any elements were deleted; otherwise, false.</returns>
+    public bool DeleteElements(Action<IReadOnlyCollection<IDeletableElement>> chooseElements)
+    {
+        var list = _k8s.CoreV1.ListNamespacedSecretWithHttpMessagesAsync(
+            namespaceParameter: _namespace,
+            labelSelector: _labelSelector).ConfigureAwait(false).GetAwaiter().GetResult();
+
+        var deletableElements = new List<KubernetesDeletableElement>();
+
+        foreach (var s in list.Body.Items)
+        {
+            deletableElements.Add(new KubernetesDeletableElement(s));
+        }
+
+        chooseElements(deletableElements);
+
+        var anyDeleted = false;
+
+        foreach (var element in deletableElements
+            .Where(e => e.DeletionOrder.HasValue)
+            .OrderBy(e => e.DeletionOrder.GetValueOrDefault()))
+        {
+            _k8s.CoreV1.DeleteNamespacedSecretWithHttpMessagesAsync(
+                name: element.SecretName,
+                namespaceParameter: _namespace
+            ).ConfigureAwait(false).GetAwaiter().GetResult();
+
+            anyDeleted = true;
+        }
+
+        return anyDeleted;
+    }
+
+    private class KubernetesDeletableElement : IDeletableElement
+    {
+        /// <summary>
+        /// Kubernetes Secret Name
+        /// </summary>
+        public string SecretName { get; }
+
+        /// <inheritdoc/>
+        public XElement Element { get; }
+
+        /// <inheritdoc/>
+        public int? DeletionOrder { get; set; }
+
+        public KubernetesDeletableElement(V1Secret secret)
+        {
+            SecretName = secret.Metadata.Name;
+
+            Element = XElement.Parse(Encoding.UTF8.GetString(secret.Data[SecretName]));
+        }
     }
 }
