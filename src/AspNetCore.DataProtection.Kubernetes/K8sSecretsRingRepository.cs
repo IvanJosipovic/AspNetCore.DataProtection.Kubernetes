@@ -82,6 +82,6 @@ public sealed class K8sSecretsRingRepository : IXmlRepository
             Type = "Opaque"
         };
 
-        _k8s.CoreV1.CreateNamespacedSecretWithHttpMessagesAsync(secret, _namespace).GetAwaiter().GetResult();
+        _k8s.CoreV1.CreateNamespacedSecretWithHttpMessagesAsync(secret, _namespace).ConfigureAwait(false).GetAwaiter().GetResult();
     }
 }
