@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/AspNetCore.DataProtection.Kubernetes/AspNetCore.DataProtection.Kubernetes.csproj" />
+  <Project Path="tests/AspNetCore.DataProtection.Kubernetes.Tests/AspNetCore.DataProtection.Kubernetes.Tests.csproj" />
+</Solution>
