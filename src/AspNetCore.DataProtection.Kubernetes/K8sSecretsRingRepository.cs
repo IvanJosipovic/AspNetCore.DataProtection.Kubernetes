@@ -40,6 +40,10 @@ public sealed class K8sSecretsRingRepository : IXmlRepository
             namespaceParameter: _namespace,
             labelSelector: _labelSelector).GetAwaiter().GetResult();
 
+        if (list?.Body?.Items == null)
+        {
+            return Array.Empty<XElement>();
+        }
         var elements = new List<XElement>();
         foreach (var s in list.Body.Items)
         {
