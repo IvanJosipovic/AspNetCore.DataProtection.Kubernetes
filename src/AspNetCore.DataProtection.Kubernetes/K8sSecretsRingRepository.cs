@@ -19,9 +19,9 @@ public sealed class K8sSecretsRingRepository : IXmlRepository
     /// <summary>
     /// Support for storing DataProtection keys using Kubernetes Secrets
     /// </summary>
-    /// <param name="k8s"></param>
-    /// <param name="namespace"></param>
-    /// <param name="appName"></param>
+    /// <param name="k8s">Kubernetes client instance used to interact with the cluster.</param>
+    /// <param name="namespace">Target Kubernetes namespace for storing secrets.</param>
+    /// <param name="appName">Value used in the label selector to identify secrets for the application.</param>
     public K8sSecretsRingRepository(IKubernetes k8s, string @namespace, string appName)
     {
         _k8s = k8s;
