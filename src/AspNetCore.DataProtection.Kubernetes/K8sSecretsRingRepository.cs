@@ -38,7 +38,7 @@ public sealed class K8sSecretsRingRepository : IXmlRepository
     {
         var list = _k8s.CoreV1.ListNamespacedSecretWithHttpMessagesAsync(
             namespaceParameter: _namespace,
-            labelSelector: _labelSelector).GetAwaiter().GetResult();
+            labelSelector: _labelSelector).ConfigureAwait(false).GetAwaiter().GetResult();
 
         if (list?.Body?.Items == null)
         {
