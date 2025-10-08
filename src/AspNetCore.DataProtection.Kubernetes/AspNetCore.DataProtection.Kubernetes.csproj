@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <Authors>Ivan Josipovic</Authors>
-    <Description>Support for storing DataProtection keys using Kubernetes Secrets.</Description>
+    <Description>Support for storing DataProtection keys using Kubernetes Secrets</Description>
     <PackageTags>AspNet DataProtection Kubernetes</PackageTags>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -17,6 +17,7 @@
     <IsPackable>true</IsPackable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsAotCompatible>true</IsAotCompatible>
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
