@@ -17,7 +17,7 @@
     <IsPackable>true</IsPackable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <IsAotCompatible>true</IsAotCompatible>
+    <IsAotCompatible>false</IsAotCompatible>
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
