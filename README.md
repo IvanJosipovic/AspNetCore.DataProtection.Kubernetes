@@ -26,6 +26,9 @@ public class Program
                     x.XmlRepository = new KubernetesSecretXmlRepository(client, "myapp", "default");
                 }
             });
+
+        var app = builder.Build();
+        app.Run();
     }
 }
 ```
