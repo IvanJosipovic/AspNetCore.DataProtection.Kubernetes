@@ -26,6 +26,36 @@ public class Program
                     x.XmlRepository = new KubernetesSecretXmlRepository(client, "myapp", "default");
                 }
             });
+
+        var app = builder.Build();
+        app.Run();
     }
 }
 ```
+
+## Required Permissions
+This library requires Secret Create List and Delete permissions
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: my-app-role
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["list", "create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: my-app-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: my-app-role
+subjects:
+- kind: ServiceAccount
+  name: my-app-service-account
+  namespace: default
+  ```
