@@ -140,7 +140,7 @@ public sealed class KubernetesSecretXmlRepository : IDeletableXmlRepository
         return anyDeleted;
     }
 
-    private class KubernetesDeletableElement : IDeletableElement
+    private sealed class KubernetesDeletableElement : IDeletableElement
     {
         /// <summary>
         /// Kubernetes Secret Name
