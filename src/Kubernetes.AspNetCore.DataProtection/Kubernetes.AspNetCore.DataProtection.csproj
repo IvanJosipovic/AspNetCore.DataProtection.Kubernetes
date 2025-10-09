@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
     <Authors>Ivan Josipovic</Authors>
-    <Description>Support for storing DataProtection keys using Kubernetes Secrets</Description>
+    <Description>Support for storing AspNet DataProtection keys using Kubernetes Secrets</Description>
     <PackageTags>AspNet DataProtection Kubernetes</PackageTags>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
