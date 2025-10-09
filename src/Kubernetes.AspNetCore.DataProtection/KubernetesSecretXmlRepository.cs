@@ -20,7 +20,7 @@ public sealed class KubernetesSecretXmlRepository : IDeletableXmlRepository
 
     private const string AppLabelKey = "app";
     private const string TypeLabelKey = "type";
-    private const string TypeLabelValue = "DataProtection";
+    private const string TypeLabelValue = "dataprotection";
     private const string SecretKeyName = "key.xml";
 
     /// <summary>

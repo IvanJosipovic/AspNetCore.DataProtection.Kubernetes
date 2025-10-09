@@ -20,7 +20,7 @@ public class KubernetesSecretXmlRepositoryTests
                 Labels = new Dictionary<string, string>
                 {
                     ["app"] = "my-app",
-                    ["type"] = "DataProtection"
+                    ["type"] = "dataprotection"
                 }
             },
             Data = new Dictionary<string, byte[]> { { "key.xml", Encoding.UTF8.GetBytes(xml) } },
@@ -40,7 +40,7 @@ public class KubernetesSecretXmlRepositoryTests
                 allowWatchBookmarks: null,
                 continueParameter: null,
                 fieldSelector: null,
-                It.Is<string>(sel => sel == "app=my-app,type=DataProtection"),
+                It.Is<string>(sel => sel == "app=my-app,type=dataprotection"),
                 limit: null,
                 resourceVersion: null,
                 resourceVersionMatch: null,
@@ -124,10 +124,10 @@ public class KubernetesSecretXmlRepositoryTests
         repo.StoreElement(element, "friendly");
 
         Assert.NotNull(created);
-        Assert.Equal("DataProtection-friendly", created!.Metadata.Name);
+        Assert.Equal("dataprotection-friendly", created!.Metadata.Name);
         Assert.Equal("default", created.Metadata.NamespaceProperty);
         Assert.Equal("my-app", created.Metadata.Labels["app"]);
-        Assert.Equal("DataProtection", created.Metadata.Labels["type"]);
+        Assert.Equal("dataprotection", created.Metadata.Labels["type"]);
         Assert.True(created.Data!.ContainsKey("key.xml"));
 
         var xml = Encoding.UTF8.GetString(created.Data["key.xml"]);
@@ -185,7 +185,7 @@ public class KubernetesSecretXmlRepositoryTests
                 allowWatchBookmarks: null,
                 continueParameter: null,
                 fieldSelector: null,
-                It.Is<string>(sel => sel == "app=my-app,type=DataProtection"),
+                It.Is<string>(sel => sel == "app=my-app,type=dataprotection"),
                 limit: null,
                 resourceVersion: null,
                 resourceVersionMatch: null,
@@ -229,7 +229,7 @@ public class KubernetesSecretXmlRepositoryTests
                 allowWatchBookmarks: null,
                 continueParameter: null,
                 fieldSelector: null,
-                It.Is<string>(sel => sel == "app=my-app,type=DataProtection"),
+                It.Is<string>(sel => sel == "app=my-app,type=dataprotection"),
                 limit: null,
                 resourceVersion: null,
                 resourceVersionMatch: null,
@@ -318,7 +318,7 @@ public class KubernetesSecretXmlRepositoryTests
                 allowWatchBookmarks: null,
                 continueParameter: null,
                 fieldSelector: null,
-                It.Is<string>(sel => sel == "app=my-app,type=DataProtection"),
+                It.Is<string>(sel => sel == "app=my-app,type=dataprotection"),
                 limit: null,
                 resourceVersion: null,
                 resourceVersionMatch: null,
