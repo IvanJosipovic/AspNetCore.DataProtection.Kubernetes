@@ -157,7 +157,7 @@ public sealed class KubernetesSecretXmlRepository : IDeletableXmlRepository
         {
             SecretName = secret.Metadata.Name;
 
-            Element = XElement.Parse(Encoding.UTF8.GetString(secret.Data[SecretName]));
+            Element = XElement.Parse(Encoding.UTF8.GetString(secret.Data[SecretKeyName]));
         }
     }
 }
