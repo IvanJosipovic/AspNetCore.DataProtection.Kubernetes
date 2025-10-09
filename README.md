@@ -34,7 +34,7 @@ public class Program
 ```
 
 ## Required Permissions
-This library requires Secret Create List and Delete permissions
+This library requires Secret Create, List and Delete permissions
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
