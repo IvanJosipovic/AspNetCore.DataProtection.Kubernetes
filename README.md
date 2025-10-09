@@ -23,7 +23,7 @@ public class Program
                 {
                     var config = KubernetesClientConfiguration.InClusterConfig();
                     var client = new k8s.Kubernetes(config);
-                    x.XmlRepository = new KubernetesSecretXmlRepository(client, "myapp", "default");
+                    x.XmlRepository = new KubernetesSecretXmlRepository(client, "default", "myapp");
                 }
             });
 
