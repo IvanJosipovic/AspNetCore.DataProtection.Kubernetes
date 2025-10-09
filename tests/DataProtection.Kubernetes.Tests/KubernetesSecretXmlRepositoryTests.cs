@@ -6,7 +6,7 @@ using k8s.Autorest;
 using k8s.Models;
 using Moq;
 
-namespace AspNetCore.DataProtection.Kubernetes.Tests;
+namespace DataProtection.Kubernetes.Tests;
 
 public class KubernetesSecretXmlRepositoryTests
 {
