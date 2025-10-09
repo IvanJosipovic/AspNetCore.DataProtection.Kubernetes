@@ -18,6 +18,7 @@ permissions:
   checks: write
   issues: write
   packages: write
+  pull-requests: write
 
 jobs:
   build-test:
