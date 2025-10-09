@@ -215,4 +215,141 @@ public class KubernetesSecretXmlRepositoryTests
         k8s.VerifyAll();
         core.VerifyAll();
     }
+
+    [Fact]
+    public void DeleteElements_deletes_selected_secrets_in_requested_order()
+    {
+        var k8s = new Mock<IKubernetes>(MockBehavior.Strict);
+        var core = new Mock<ICoreV1Operations>(MockBehavior.Strict);
+
+        k8s.SetupGet(k => k.CoreV1).Returns(core.Object);
+
+        core.Setup(c => c.ListNamespacedSecretWithHttpMessagesAsync(
+                It.Is<string>(ns => ns == "default"),
+                allowWatchBookmarks: null,
+                continueParameter: null,
+                fieldSelector: null,
+                It.Is<string>(sel => sel == "app=my-app,type=DataProtection"),
+                limit: null,
+                resourceVersion: null,
+                resourceVersionMatch: null,
+                sendInitialEvents: null,
+                timeoutSeconds: null,
+                watch: null,
+                pretty: null,
+                customHeaders: null,
+                It.IsAny<CancellationToken>()
+                ))
+           .ReturnsAsync(new HttpOperationResponse<V1SecretList>
+           {
+               Body = new V1SecretList(
+                   [
+                    MakeSecret("dp-key-1", "<key id='1'/>"),
+                    MakeSecret("dp-key-2", "<key id='2'/>"),
+                    MakeSecret("dp-key-3", "<key id='3'/>")
+                   ]
+               ),
+               Response = new HttpResponseMessage(HttpStatusCode.OK)
+           });
+
+        var deletions = new List<string>();
+
+        core.Setup(c => c.DeleteNamespacedSecretWithHttpMessagesAsync(
+                It.IsAny<string>(),
+                It.Is<string>(ns => ns == "default"),
+                It.Is<V1DeleteOptions?>(body => body == null),
+                It.Is<string?>(dryRun => dryRun == null),
+                It.Is<int?>(grace => grace == null),
+                It.Is<bool?>(ignore => ignore == null),
+                It.Is<bool?>(orphan => orphan == null),
+                It.Is<string?>(policy => policy == null),
+                It.Is<bool?>(pretty => pretty == null),
+                It.IsAny<IReadOnlyDictionary<string, IReadOnlyList<string>>?>(),
+                It.IsAny<CancellationToken>()))
+            .Callback((string name,
+                      string ns,
+                      V1DeleteOptions? body,
+                      string? dryRun,
+                      int? grace,
+                      bool? ignore,
+                      bool? orphan,
+                      string? policy,
+                      bool? pretty,
+                      IReadOnlyDictionary<string, IReadOnlyList<string>>? headers,
+                      CancellationToken ct) =>
+            {
+                deletions.Add(name);
+            })
+            .ReturnsAsync(new HttpOperationResponse<V1Status>
+            {
+                Body = new V1Status(),
+                Response = new HttpResponseMessage(HttpStatusCode.OK)
+            });
+
+        var repo = new KubernetesSecretXmlRepository(k8s.Object, "default", "my-app");
+
+        var result = repo.DeleteElements(elements =>
+        {
+            Assert.Equal(3, elements.Count);
+
+            var byId = elements.ToDictionary(e => e.Element.Attribute("id")!.Value);
+
+            byId["2"].DeletionOrder = 1;
+            byId["1"].DeletionOrder = 2;
+        });
+
+        Assert.True(result);
+        Assert.Equal(["dp-key-2", "dp-key-1"], deletions);
+
+        k8s.VerifyAll();
+        core.VerifyAll();
+    }
+
+    [Fact]
+    public void DeleteElements_returns_false_when_no_elements_are_selected()
+    {
+        var k8s = new Mock<IKubernetes>(MockBehavior.Strict);
+        var core = new Mock<ICoreV1Operations>(MockBehavior.Strict);
+
+        k8s.SetupGet(k => k.CoreV1).Returns(core.Object);
+
+        core.Setup(c => c.ListNamespacedSecretWithHttpMessagesAsync(
+                It.Is<string>(ns => ns == "default"),
+                allowWatchBookmarks: null,
+                continueParameter: null,
+                fieldSelector: null,
+                It.Is<string>(sel => sel == "app=my-app,type=DataProtection"),
+                limit: null,
+                resourceVersion: null,
+                resourceVersionMatch: null,
+                sendInitialEvents: null,
+                timeoutSeconds: null,
+                watch: null,
+                pretty: null,
+                customHeaders: null,
+                It.IsAny<CancellationToken>()
+                ))
+           .ReturnsAsync(new HttpOperationResponse<V1SecretList>
+           {
+               Body = new V1SecretList(
+                   [
+                    MakeSecret("dp-key-1", "<key id='1'/>")
+                   ]
+               ),
+               Response = new HttpResponseMessage(HttpStatusCode.OK)
+           });
+
+        var repo = new KubernetesSecretXmlRepository(k8s.Object, "default", "my-app");
+
+        var result = repo.DeleteElements(elements =>
+        {
+            Assert.Single(elements);
+            Assert.Equal("1", elements.Single().Element.Attribute("id")!.Value);
+        });
+
+        Assert.False(result);
+
+        k8s.VerifyAll();
+        core.VerifyAll();
+    }
 }
