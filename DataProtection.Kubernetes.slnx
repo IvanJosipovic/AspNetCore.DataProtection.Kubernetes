@@ -6,6 +6,6 @@
     <File Path=".releaserc.json" />
     <File Path="global.json" />
   </Folder>
-  <Project Path="src/AspNetCore.DataProtection.Kubernetes/AspNetCore.DataProtection.Kubernetes.csproj" />
-  <Project Path="tests/AspNetCore.DataProtection.Kubernetes.Tests/AspNetCore.DataProtection.Kubernetes.Tests.csproj" />
+  <Project Path="src/DataProtection.Kubernetes/DataProtection.Kubernetes.csproj" />
+  <Project Path="tests/DataProtection.Kubernetes.Tests/DataProtection.Kubernetes.Tests.csproj" />
 </Solution>

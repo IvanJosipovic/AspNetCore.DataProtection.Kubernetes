@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AspNetCore.DataProtection.Kubernetes\AspNetCore.DataProtection.Kubernetes.csproj" />
+    <ProjectReference Include="..\..\src\DataProtection.Kubernetes\DataProtection.Kubernetes.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,2 +1,2 @@
-# AspNetCore.DataProtection.Kubernetes
+# DataProtection.Kubernetes
 Support for storing DataProtection keys using Kubernetes Secrets. 
