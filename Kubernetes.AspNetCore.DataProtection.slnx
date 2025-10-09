@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".github/renovate.json" />
+    <File Path=".github/workflows/cicd.yaml" />
+    <File Path=".github/workflows/pr.yaml" />
+    <File Path=".releaserc.json" />
+    <File Path="global.json" />
+  </Folder>
+  <Project Path="src/Kubernetes.AspNetCore.DataProtection/Kubernetes.AspNetCore.DataProtection.csproj" />
+  <Project Path="tests/Kubernetes.AspNetCore.DataProtection.Tests/Kubernetes.AspNetCore.DataProtection.Tests.csproj" />
+</Solution>

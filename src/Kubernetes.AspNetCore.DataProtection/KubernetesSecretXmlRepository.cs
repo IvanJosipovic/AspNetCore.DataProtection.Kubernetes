@@ -6,7 +6,7 @@ using k8s;
 using k8s.Models;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 
-namespace DataProtection.Kubernetes;
+namespace Kubernetes.AspNetCore.DataProtection;
 
 /// <summary>
 /// Support for storing DataProtection keys using Kubernetes Secrets
