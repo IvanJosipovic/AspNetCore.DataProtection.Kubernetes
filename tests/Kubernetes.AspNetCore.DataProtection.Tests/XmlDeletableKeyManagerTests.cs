@@ -16,7 +16,41 @@ public class XmlDeletableKeyManagerTests
 
         public bool DeleteElements(Action<IReadOnlyCollection<IDeletableElement>> chooseElements)
         {
-            throw new NotImplementedException();
+            if (chooseElements is null) throw new ArgumentNullException(nameof(chooseElements));
+
+            // Create wrappers over a snapshot of current elements.
+            var wrappers = _elements
+                .Select((e, i) => new DeletableElement(i, e))
+                .Cast<IDeletableElement>()
+                .ToList()
+                .AsReadOnly();
+
+            chooseElements(wrappers);
+
+            // Determine which were marked for deletion.
+            var deletable = wrappers
+                .OfType<DeletableElement>()
+                .Where(d => d.DeletionOrder.HasValue)
+                .OrderByDescending(d => d.DeletionOrder)
+                .ToList();
+
+            if (deletable.Count == 0)
+                return false;
+
+            foreach (var d in deletable)
+            {
+                if (d.Index >= 0 && d.DeletionOrder < _elements.Count && ReferenceEquals(_elements[d.Index], d.Element))
+                {
+                    _elements.RemoveAt(d.Index);
+                }
+                else
+                {
+                    // Fallback: remove by reference if indices shifted.
+                    _elements.Remove(d.Element);
+                }
+            }
+
+            return true;
         }
 
         public IReadOnlyCollection<XElement> GetAllElements()
@@ -24,6 +58,20 @@ public class XmlDeletableKeyManagerTests
 
         public void StoreElement(XElement element, string friendlyName)
             => _elements.Add(new XElement(element));
+
+        private sealed class DeletableElement : IDeletableElement
+        {
+            public DeletableElement(int index, XElement element)
+            {
+                Index = index;
+                Element = element;
+            }
+
+            public int Index { get; }
+            public XElement Element { get; }
+
+            public int? DeletionOrder { get;  set; }
+        }
     }
 
     private sealed class SimpleActivator : IActivator
@@ -129,6 +177,31 @@ public class XmlDeletableKeyManagerTests
         // We cannot directly prove delegation, but we can assert the property is exposed and boolean.
         // XmlKeyManager currently supports deletion; the wrapper should surface true.
         Assert.True(manager.CanDeleteKeys);
+    }
+
+    [Fact]
+    public void DeleteKeys_deletes_selected_key_and_related_revocation()
+    {
+        var manager = CreateManager(out _);
+        var now = DateTimeOffset.UtcNow;
+
+        var key1 = manager.CreateNewKey(now, now.AddDays(5));
+        var key2 = manager.CreateNewKey(now.AddMinutes(1), now.AddDays(6));
+
+        // Revoke key1 so a revocation element exists in repository
+        manager.RevokeKey(key1.KeyId, "test");
+
+        // Sanity: we have 2 keys, key1 revoked
+        var allBefore = manager.GetAllKeys();
+        Assert.Equal(2, allBefore.Count);
+        Assert.True(allBefore.Single(k => k.KeyId == key1.KeyId).IsRevoked);
+
+        var deleted = manager.DeleteKeys(k => k.KeyId == key1.KeyId);
+        Assert.True(deleted);
+
+        var remaining = manager.GetAllKeys();
+        Assert.Single(remaining);
+        Assert.Equal(key2.KeyId, remaining.Single().KeyId);
     }
 
     [Fact]
