@@ -20,7 +20,7 @@ public class XmlDeletableKeyManagerTests
 
             // Create wrappers over a snapshot of current elements.
             var wrappers = _elements
-                .Select((e, i) => new DeletableElement(i, e))
+                .Select(e => new DeletableElement(e))
                 .Cast<IDeletableElement>()
                 .ToList()
                 .AsReadOnly();
@@ -35,19 +35,13 @@ public class XmlDeletableKeyManagerTests
                 .ToList();
 
             if (deletable.Count == 0)
+            {
                 return false;
+            }
 
             foreach (var d in deletable)
             {
-                if (d.Index >= 0 && d.Index < _elements.Count && ReferenceEquals(_elements[d.Index], d.Element))
-                {
-                    _elements.RemoveAt(d.Index);
-                }
-                else
-                {
-                    // Fallback: remove by reference if indices shifted.
-                    _elements.Remove(d.Element);
-                }
+                _elements.Remove(d.Element);
             }
 
             return true;
@@ -61,13 +55,11 @@ public class XmlDeletableKeyManagerTests
 
         private sealed class DeletableElement : IDeletableElement
         {
-            public DeletableElement(int index, XElement element)
+            public DeletableElement(XElement element)
             {
-                Index = index;
                 Element = element;
             }
 
-            public int Index { get; }
             public XElement Element { get; }
             public int? DeletionOrder { get; set; }
         }
