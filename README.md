@@ -9,6 +9,8 @@ Support for storing AspNetCore DataProtection keys using Kubernetes Secrets.
 ## How to use
 
 ```csharp
+using Kubernetes.AspNetCore.DataProtection;
+
 public class Program
 {
     public static void Main(string[] args)
@@ -26,6 +28,8 @@ public class Program
                     x.XmlRepository = new KubernetesSecretXmlRepository(client, "default", "myapp");
                 }
             });
+
+        builder.Services.AddSingleton<IKeyManager, XmlDeletableKeyManager>();
 
         var app = builder.Build();
         app.Run();
