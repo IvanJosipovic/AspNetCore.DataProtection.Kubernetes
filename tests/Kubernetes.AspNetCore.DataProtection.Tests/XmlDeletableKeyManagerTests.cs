@@ -39,7 +39,7 @@ public class XmlDeletableKeyManagerTests
 
             foreach (var d in deletable)
             {
-                if (d.Index >= 0 && d.DeletionOrder < _elements.Count && ReferenceEquals(_elements[d.Index], d.Element))
+                if (d.Index >= 0 && d.Index < _elements.Count && ReferenceEquals(_elements[d.Index], d.Element))
                 {
                     _elements.RemoveAt(d.Index);
                 }
@@ -222,3 +222,4 @@ public class XmlDeletableKeyManagerTests
         Assert.True(token.IsCancellationRequested || !token.Equals(token2));
     }
 }
+
