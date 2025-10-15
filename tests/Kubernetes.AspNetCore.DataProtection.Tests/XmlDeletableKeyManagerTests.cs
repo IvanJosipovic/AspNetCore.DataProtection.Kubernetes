@@ -69,8 +69,7 @@ public class XmlDeletableKeyManagerTests
 
             public int Index { get; }
             public XElement Element { get; }
-
-            public int? DeletionOrder { get;  set; }
+            public int? DeletionOrder { get; set; }
         }
     }
 
