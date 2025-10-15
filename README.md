@@ -17,6 +17,8 @@ public class Program
     {
         var builder = WebApplication.CreateSlimBuilder(args);
 
+        builder.Services.AddSingleton<IKeyManager, XmlDeletableKeyManager>();
+
         builder.Services
             .AddDataProtection()
             .AddKeyManagementOptions(x =>
@@ -28,8 +30,6 @@ public class Program
                     x.XmlRepository = new KubernetesSecretXmlRepository(client, "default", "myapp");
                 }
             });
-
-        builder.Services.AddSingleton<IKeyManager, XmlDeletableKeyManager>();
 
         var app = builder.Build();
         app.Run();
