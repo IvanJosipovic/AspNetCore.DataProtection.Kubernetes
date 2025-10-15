@@ -174,7 +174,7 @@ public class XmlDeletableKeyManagerTests
     {
         var manager = CreateManager(out _);
         // We cannot directly prove delegation, but we can assert the property is exposed and boolean.
-        // XmlKeyManager currently supports deletion; the wrapper should surface true.
+        // Deletion support depends on whether the underlying repository implements IDeletableXmlRepository.
         Assert.True(manager.CanDeleteKeys);
     }
 
