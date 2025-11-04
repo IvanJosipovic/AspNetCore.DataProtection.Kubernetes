@@ -53,12 +53,13 @@ public class KubernetesSecretXmlRepositoryTests
                 ))
            .ReturnsAsync(new HttpOperationResponse<V1SecretList>
            {
-               Body = new V1SecretList(
-                   [
+               Body = new V1SecretList()
+               {
+                   Items = [
                     MakeSecret("dp-key-1", "<key id='1'/>"),
                     MakeSecret("dp-key-2",  "<key id='2'/>")
-                   ]
-               ),
+                       ]
+               },
                Response = new HttpResponseMessage(HttpStatusCode.OK)
            });
 
@@ -198,7 +199,10 @@ public class KubernetesSecretXmlRepositoryTests
                 ))
            .ReturnsAsync(new HttpOperationResponse<V1SecretList>
            {
-               Body = new V1SecretList(store),
+               Body = new V1SecretList()
+               {
+                   Items = store
+               },
                Response = new HttpResponseMessage(HttpStatusCode.OK)
            });
 
@@ -242,13 +246,14 @@ public class KubernetesSecretXmlRepositoryTests
                 ))
            .ReturnsAsync(new HttpOperationResponse<V1SecretList>
            {
-               Body = new V1SecretList(
-                   [
-                    MakeSecret("dp-key-1", "<key id='1'/>"),
-                    MakeSecret("dp-key-2", "<key id='2'/>"),
-                    MakeSecret("dp-key-3", "<key id='3'/>")
-                   ]
-               ),
+               Body = new V1SecretList()
+               {
+                   Items = [
+                        MakeSecret("dp-key-1", "<key id='1'/>"),
+                        MakeSecret("dp-key-2", "<key id='2'/>"),
+                        MakeSecret("dp-key-3", "<key id='3'/>")
+                    ]
+               },
                Response = new HttpResponseMessage(HttpStatusCode.OK)
            });
 
@@ -331,11 +336,12 @@ public class KubernetesSecretXmlRepositoryTests
                 ))
            .ReturnsAsync(new HttpOperationResponse<V1SecretList>
            {
-               Body = new V1SecretList(
-                   [
+               Body = new V1SecretList()
+               {
+                   Items = [
                     MakeSecret("dp-key-1", "<key id='1'/>")
                    ]
-               ),
+               },
                Response = new HttpResponseMessage(HttpStatusCode.OK)
            });
 
