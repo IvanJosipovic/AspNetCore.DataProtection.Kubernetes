@@ -16,7 +16,7 @@ public class XmlDeletableKeyManagerTests
 
         public bool DeleteElements(Action<IReadOnlyCollection<IDeletableElement>> chooseElements)
         {
-            if (chooseElements is null) throw new ArgumentNullException(nameof(chooseElements));
+            ArgumentNullException.ThrowIfNull(chooseElements);
 
             // Create wrappers over a snapshot of current elements.
             var wrappers = _elements
